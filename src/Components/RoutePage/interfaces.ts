@@ -3,6 +3,7 @@ export interface RouteI {
   end: string;
   cost: number;
   id: string;
+  unicId: string;
 }
 export interface RouteTable {
   [key: string]: {

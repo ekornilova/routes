@@ -1,6 +1,9 @@
 //  const routes = `AB1, AC4, AD10, BE3, CD4, CF2, DE1, EB3, EA2, FD1`
 import { RouteI, RouteTree, RouteResult, RouteTable } from './interfaces';
 
+const getUniqId = (begin: string, end: string) => {
+  return [begin, end].sort().join('');
+};
 export const getRoutesFromStr = (
   routesStr: string,
 ): {
@@ -21,6 +24,7 @@ export const getRoutesFromStr = (
           end,
           cost,
           id: route,
+          unicId: getUniqId(begin, end),
         };
         result.push(routeObj);
         letters.add(begin);
@@ -30,7 +34,6 @@ export const getRoutesFromStr = (
             ...table,
             [begin as keyof typeof table]: {},
           };
-          // table[begin as keyof typeof table]: any = {};
         }
         table = {
           ...table,
@@ -41,11 +44,6 @@ export const getRoutesFromStr = (
             [end]: cost,
           },
         };
-        // table[begin] = {
-        //   ...(table[begin] as any),
-        //   [end]: cost
-        // }
-        // table[begin][end] = cost;
       }
     }
     return result;
@@ -61,22 +59,30 @@ export const getRoutesFromStr = (
 export const getNextRoute = (
   result: RouteTree,
   route: RouteI,
+  canTwice?: boolean,
   maxCost?: number,
   maxStop?: number,
 ): RouteTree | null => {
   const { cost, ids: oldIds } = result;
   const newCost = cost + route.cost;
-  if ((maxCost && newCost > maxCost) || (maxStop && result.route.length + 1 > maxStop)) {
+  const extraCondition = canTwice
+    ? !oldIds[route.unicId] || oldIds[route.unicId] < 2
+    : !oldIds[route.unicId];
+  if (
+    (maxCost && newCost > maxCost) ||
+    (maxStop && result.route.length + 1 > maxStop) ||
+    !extraCondition
+  ) {
     return null;
   }
   const newRoute = result.route.concat([route.end]);
   const ids = {
     ...oldIds,
   };
-  if (ids[route.id]) {
-    ids[route.id] += 1;
+  if (ids[route.unicId]) {
+    ids[route.unicId] += 1;
   } else {
-    ids[route.id] = 1;
+    ids[route.unicId] = 1;
   }
   const newRouteForArr = {
     routes: [],
@@ -92,6 +98,7 @@ const getRoute = (begin: string, end: string, cost: number): RouteI => {
     end,
     cost,
     id: [begin, end, cost].join(''),
+    unicId: getUniqId(begin, end),
   };
 };
 export const getDeliveryRoute = (
@@ -106,18 +113,17 @@ export const getDeliveryRoute = (
   const isFindRoute = routeTab[beginL] && routeTab[beginL][endL];
   if (!isFindRoute) {
     if (routeTab[beginL]) {
-      const possibleRoutes = Object.entries(routeTab[beginL])
-        .map(([end, cost]) => {
-          return getRoute(beginL, end, cost);
-        })
-        .filter((route) => {
-          return canTwice
-            ? !result.ids[route.id] || result.ids[route.id] < 2
-            : !result.ids[route.id];
-        });
+      const possibleRoutes = Object.entries(routeTab[beginL]).map(([end, cost]) => {
+        return getRoute(beginL, end, cost);
+      });
+      // .filter((route) => {
+      //   return canTwice
+      //     ? !result.ids[route.unicId] || result.ids[route.unicId] < 2
+      //     : !result.ids[route.unicId];
+      // });
       if (possibleRoutes.length) {
         possibleRoutes.forEach((route) => {
-          const newRouteForArr = getNextRoute(result, route, maxCost, maxStop);
+          const newRouteForArr = getNextRoute(result, route, canTwice, maxCost, maxStop);
           if (!newRouteForArr) {
             return;
           }
@@ -145,6 +151,7 @@ export const getDeliveryRoute = (
   const findNextRoute = getNextRoute(
     result,
     getRoute(beginL, endL, routeTab[beginL][endL]),
+    canTwice,
     maxCost,
     maxStop,
   );
@@ -187,6 +194,7 @@ export const getRoutesResult = (
     maxCost,
     maxStop,
   );
+  console.log('result', result);
   const treeResult: RouteResult[] = [];
   goTreeResult(result, treeResult);
   return treeResult.sort((a, b) => {
