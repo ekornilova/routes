@@ -10,7 +10,7 @@ export const getRoutesFromStr = (
 } => {
   const routes = routesStr.replace(/[\s]/g, '');
   const letters = new Set();
-  const table = {};
+  let table = {};
   const routesResult = routes.split(',').reduce((result: RouteI[], route: string) => {
     if (route.match(/^[a-z]{2}[0-9]+$/i)) {
       const [begin, end] = route.slice(0, 2).split('');
@@ -26,9 +26,26 @@ export const getRoutesFromStr = (
         letters.add(begin);
         letters.add(end);
         if (!table[begin as keyof typeof table]) {
-          table[begin] = {};
+          table = {
+            ...table,
+            [begin as keyof typeof table]: {},
+          };
+          // table[begin as keyof typeof table]: any = {};
         }
-        table[begin][end] = cost;
+        table = {
+          ...table,
+          [begin]: {
+            ...(table[begin as keyof typeof table] as {
+              [key: string]: number;
+            }),
+            [end]: cost,
+          },
+        };
+        // table[begin] = {
+        //   ...(table[begin] as any),
+        //   [end]: cost
+        // }
+        // table[begin][end] = cost;
       }
     }
     return result;
