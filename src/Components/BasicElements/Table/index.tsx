@@ -6,7 +6,6 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
-import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import { TableProps, AnyObject } from './interfaces';
 
@@ -14,22 +13,13 @@ const StPaper = styled(Paper)`
   width: 100%;
 `;
 const StTableContainer = styled(TableContainer)`
-  max-height: 440px;
+  max-height: 310px;
+`;
+const StTableBody = styled(TableBody)`
+  overflow-y: scroll;
 `;
 
 const StTable = <T extends AnyObject>({ columns, rows, className }: TableProps<T>) => {
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
-
-  const handleChangePage = (event: any, newPage: number) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event: any) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
-  };
-
   return (
     <StPaper className={className}>
       <StTableContainer>
@@ -47,8 +37,8 @@ const StTable = <T extends AnyObject>({ columns, rows, className }: TableProps<T
               ))}
             </TableRow>
           </TableHead>
-          <TableBody>
-            {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+          <StTableBody>
+            {rows.map((row) => {
               return (
                 <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
                   {columns.map((column) => {
@@ -62,18 +52,9 @@ const StTable = <T extends AnyObject>({ columns, rows, className }: TableProps<T
                 </TableRow>
               );
             })}
-          </TableBody>
+          </StTableBody>
         </Table>
       </StTableContainer>
-      <TablePagination
-        rowsPerPageOptions={[10, 25, 100]}
-        component="div"
-        count={rows.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onChangePage={handleChangePage}
-        onChangeRowsPerPage={handleChangeRowsPerPage}
-      />
     </StPaper>
   );
 };

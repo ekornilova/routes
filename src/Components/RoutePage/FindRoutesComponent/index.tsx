@@ -2,37 +2,79 @@ import React, { FC, useState, ChangeEvent, useEffect } from 'react';
 import { getRoutesResult } from '../helpers';
 import { TabPanelProps, RouteResult } from '../interfaces';
 import TabResult from '../TabResult';
-// import { columns } from './tableSettings';
 import {
   Wrapper,
   WrapperSelectPart,
   SelectFrom,
   SelectTo,
   UpdateRoute,
-  // WrapperOutPart,
-  // StTable,
-  // WrapperResult,
+  MaxCostInput,
+  MaxStopInput,
+  CanTwiceCheckBox,
+  WrapperSettingsPart,
 } from './styles';
 
+interface SettingI {
+  letterTo: string;
+  letterFrom: string;
+  maxStop: number;
+  maxCost: number;
+  canTwice: boolean;
+}
+const defaultSettingValue = {
+  letterTo: '',
+  letterFrom: '',
+  maxStop: 0,
+  maxCost: 0,
+  canTwice: false,
+};
 const FindRoutesComponent: FC<TabPanelProps> = ({ letters, routes }) => {
-  const [letterTo, setLetterTo] = useState<string>('');
-  const [letterFrom, setLetterFrom] = useState<string>('');
+  const [setting, setSetting] = useState<SettingI>(defaultSettingValue);
   const [result, setResult] = useState<RouteResult[]>([]);
   useEffect(() => {
-    setLetterTo('');
-    setLetterFrom('');
-    setResult([]);
+    setSetting(defaultSettingValue);
   }, [routes]);
+
+  const { letterFrom, letterTo, maxStop, maxCost, canTwice } = setting;
   const onFindRoutes = () => {
-    const newResult = getRoutesResult(letterFrom, letterTo, routes);
+    const newResult = getRoutesResult(
+      letterFrom,
+      letterTo,
+      routes,
+      canTwice,
+      Number(maxCost),
+      Number(maxStop),
+    );
     setResult(newResult);
   };
-
-  const onSelectChange = (isLetterTo?: boolean) => (
+  const onLetterChange = (field: string) => (
     event: ChangeEvent<{ name?: string | undefined; value: unknown }>,
   ) => {
-    const setFunction = isLetterTo ? setLetterTo : setLetterFrom;
-    setFunction(event.target.value as string);
+    setSetting((oldSetting) => {
+      return {
+        ...oldSetting,
+        [field]: event.target.value as string,
+      };
+    });
+  };
+  const onMaxSettingChange = (field: string) => (
+    event: ChangeEvent<{ name?: string | undefined; value: unknown }>,
+  ) => {
+    const num = (event.target.value || '').replace(/[\D]*/g, '');
+    setSetting((oldSetting) => {
+      return {
+        ...oldSetting,
+        [field]: num as string,
+      };
+    });
+  };
+  const onChangeCheckBox = (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSetting((oldSetting) => {
+      return {
+        ...oldSetting,
+        [field]: event.target.checked,
+      };
+    });
   };
   const letterValues = letters.map((letter) => {
     return {
@@ -44,32 +86,42 @@ const FindRoutesComponent: FC<TabPanelProps> = ({ letters, routes }) => {
   return (
     <Wrapper>
       <WrapperSelectPart>
-        <SelectTo
-          forForm
-          labelText="From"
-          value={letterFrom}
-          values={letterValues}
-          onChange={onSelectChange(false)}
-        />
-        <SelectFrom
-          forForm
-          labelText="To"
-          value={letterTo}
-          values={letterValues}
-          onChange={onSelectChange(true)}
-        />
+        <WrapperSettingsPart>
+          <SelectTo
+            forForm
+            labelText="From"
+            value={letterFrom}
+            values={letterValues}
+            onChange={onLetterChange('letterFrom')}
+          />
+          <SelectFrom
+            forForm
+            labelText="To"
+            value={letterTo}
+            values={letterValues}
+            onChange={onLetterChange('letterTo')}
+          />
+          <MaxStopInput
+            value={maxStop}
+            onChange={onMaxSettingChange('maxStop')}
+            labelText="Max stops"
+          />
+          <MaxCostInput
+            value={maxCost}
+            onChange={onMaxSettingChange('maxCost')}
+            labelText="Max cost"
+          />
+          <CanTwiceCheckBox
+            checked={canTwice}
+            label="Using same route twice"
+            onChange={onChangeCheckBox('canTwice')}
+          />
+        </WrapperSettingsPart>
         <UpdateRoute disabled={!letterTo || !letterFrom} onClick={onFindRoutes}>
           FIND ROUTES
         </UpdateRoute>
       </WrapperSelectPart>
       <TabResult result={result} />
-      {/* <WrapperResult>
-        {result.length ? (
-          <StTable columns={columns} rows={result} />
-        ) : (
-          <WrapperOutPart>No suitable routes</WrapperOutPart>
-        )}
-      </WrapperResult> */}
     </Wrapper>
   );
 };

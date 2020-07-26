@@ -1,8 +1,6 @@
 import styled from 'styled-components';
 import IconButton from '@material-ui/core/IconButton';
 import Input from '@material-ui/core/Input';
-// import IconButton from '../BasicElements/IconButton';
-// import Input from '../BasicElements/Input';
 
 export const TagInput = styled(Input)`
   input {
