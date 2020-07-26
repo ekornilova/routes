@@ -6,7 +6,8 @@ const EditTag: FC<{
   onAddTag: (value: string) => void;
   letters: string[];
   label?: string;
-}> = ({ onAddTag, letters, label }) => {
+  placeHolder?: string;
+}> = ({ onAddTag, letters, label, placeHolder }) => {
   const elementRef = React.useRef<HTMLSpanElement | null>(null);
   const [value, setValue] = useState('');
   const [isEdit, setIsEdit] = useState(false);
@@ -60,7 +61,7 @@ const EditTag: FC<{
   return (
     <EditTagWrapper ref={elementRef} onClick={onClickToEdit}>
       {isEdit ? (
-        <TagInput id="input_tag" value={value} onChange={onChangeTag} />
+        <TagInput placeholder={placeHolder} id="input_tag" value={value} onChange={onChangeTag} />
       ) : (
         <>
           <TagLabel>{label || 'New Tag'}</TagLabel>
@@ -100,9 +101,18 @@ interface TagsI {
   className?: string;
   letters: string[];
   label?: string;
+  placeHolder?: string;
 }
 
-const Tags: FC<TagsI> = ({ letters, values, onChange, disabled, className, label }) => {
+const Tags: FC<TagsI> = ({
+  letters,
+  values,
+  onChange,
+  disabled,
+  className,
+  label,
+  placeHolder,
+}) => {
   const [tags, setTags] = useState<string[]>(values);
   useEffect(() => {
     if (tags !== values) {
@@ -133,7 +143,9 @@ const Tags: FC<TagsI> = ({ letters, values, onChange, disabled, className, label
       {tags.map((tag, idx) => {
         return <Tag value={tag} onDelete={onDeleteTag(idx)} disabled={disabled} />;
       })}
-      {!disabled && <EditTag label={label} letters={letters} onAddTag={onAddTag} />}
+      {!disabled && (
+        <EditTag label={label} placeHolder={placeHolder} letters={letters} onAddTag={onAddTag} />
+      )}
     </TagsWrapper>
   );
 };

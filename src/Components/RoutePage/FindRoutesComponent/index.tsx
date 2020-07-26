@@ -28,7 +28,7 @@ const defaultSettingValue = {
   maxCost: 0,
   canTwice: false,
 };
-const FindRoutesComponent: FC<TabPanelProps> = ({ letters, routes }) => {
+const FindRoutesComponent: FC<TabPanelProps> = ({ letters, routes, table }) => {
   const [setting, setSetting] = useState<SettingI>(defaultSettingValue);
   const [result, setResult] = useState<RouteResult[]>([]);
   useEffect(() => {
@@ -41,7 +41,7 @@ const FindRoutesComponent: FC<TabPanelProps> = ({ letters, routes }) => {
     const newResult = getRoutesResult(
       letterFrom,
       letterTo,
-      routes,
+      table,
       canTwice,
       Number(maxCost),
       Number(maxStop),

@@ -24,7 +24,13 @@ const CheckUserRouteComponent: FC<TabPanelProps> = ({ letters, routes, table }) 
     <Wrapper>
       <Header>Choose your route stops:</Header>
       <WrapperTagPart>
-        <StyledTags label="New Stop" values={chooseLetters} onChange={onChange} letters={letters} />
+        <StyledTags
+          placeHolder="Print Stop"
+          label="New Stop"
+          values={chooseLetters}
+          onChange={onChange}
+          letters={letters}
+        />
         <CheckRoute disabled={chooseLetters.length < 2} onClick={onFindRoutes}>
           Check Route
         </CheckRoute>

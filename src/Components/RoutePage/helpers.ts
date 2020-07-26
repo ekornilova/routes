@@ -69,8 +69,16 @@ export const getNextRoute = (
   };
   return newRouteForArr;
 };
+const getRoute = (begin: string, end: string, cost: number): RouteI => {
+  return {
+    begin,
+    end,
+    cost,
+    id: [begin, end, cost].join(''),
+  };
+};
 export const getDeliveryRoute = (
-  routesArr: RouteI[],
+  routeTab: RouteTable,
   beginL: string,
   endL: string,
   result: RouteTree,
@@ -78,41 +86,51 @@ export const getDeliveryRoute = (
   maxCost?: number,
   maxStop?: number,
 ): RouteTree => {
-  const findRoute = routesArr.find((route) => route.begin === beginL && route.end === endL);
-  if (!findRoute) {
-    const possibleRoutes = routesArr.filter((route) => {
-      const extraCondition = canTwice
-        ? !result.ids[route.id] || result.ids[route.id] < 2
-        : !result.ids[route.id];
-      return route.begin === beginL && extraCondition;
-    });
-    if (possibleRoutes.length) {
-      possibleRoutes.forEach((route) => {
-        const newRouteForArr = getNextRoute(result, route, maxCost, maxStop);
-        if (!newRouteForArr) {
-          return;
-        }
-        const continueRoute = getDeliveryRoute(
-          routesArr,
-          route.end,
-          endL,
-          newRouteForArr,
-          canTwice,
-          maxCost,
-          maxStop,
-        );
-        if (
-          !continueRoute.routes.length &&
-          continueRoute.route[continueRoute.route.length - 1] !== endL
-        ) {
-          return;
-        }
-        result.routes.push(continueRoute);
-      });
+  const isFindRoute = routeTab[beginL] && routeTab[beginL][endL];
+  if (!isFindRoute) {
+    if (routeTab[beginL]) {
+      const possibleRoutes = Object.entries(routeTab[beginL])
+        .map(([end, cost]) => {
+          return getRoute(beginL, end, cost);
+        })
+        .filter((route) => {
+          return canTwice
+            ? !result.ids[route.id] || result.ids[route.id] < 2
+            : !result.ids[route.id];
+        });
+      if (possibleRoutes.length) {
+        possibleRoutes.forEach((route) => {
+          const newRouteForArr = getNextRoute(result, route, maxCost, maxStop);
+          if (!newRouteForArr) {
+            return;
+          }
+          const continueRoute = getDeliveryRoute(
+            routeTab,
+            route.end,
+            endL,
+            newRouteForArr,
+            canTwice,
+            maxCost,
+            maxStop,
+          );
+          if (
+            !continueRoute.routes.length &&
+            continueRoute.route[continueRoute.route.length - 1] !== endL
+          ) {
+            return;
+          }
+          result.routes.push(continueRoute);
+        });
+      }
     }
     return result;
   }
-  const findNextRoute = getNextRoute(result, findRoute, maxCost, maxStop);
+  const findNextRoute = getNextRoute(
+    result,
+    getRoute(beginL, endL, routeTab[beginL][endL]),
+    maxCost,
+    maxStop,
+  );
   if (findNextRoute) {
     result.routes.push(findNextRoute);
   }
@@ -133,13 +151,13 @@ export const goTreeResult = (tree: RouteTree, routes: RouteResult[]) => {
 export const getRoutesResult = (
   beginLetter: string,
   endLetter: string,
-  routesArr: RouteI[],
+  routeTab: RouteTable,
   canTwice?: boolean,
   maxCost?: number,
   maxStop?: number,
 ): RouteResult[] => {
   const result = getDeliveryRoute(
-    routesArr,
+    routeTab,
     beginLetter,
     endLetter,
     {
@@ -159,11 +177,9 @@ export const getRoutesResult = (
   });
 };
 export const checkUserRoute = (userRoute: string[], routeTab: RouteTable): RouteResult[] => {
-  // const copyUserRoute = [...userRoute];
   const userRouteLength = userRoute.length;
   let cost = 0;
   let beginLetter = userRoute[0];
-  // const route = [beginLetter]
   let idx = 1;
   let canGo = true;
   while (idx < userRouteLength && canGo) {
@@ -171,13 +187,11 @@ export const checkUserRoute = (userRoute: string[], routeTab: RouteTable): Route
     if (routeTab[beginLetter] && routeTab[beginLetter][nextLetter]) {
       cost += routeTab[beginLetter][nextLetter];
       beginLetter = nextLetter as string;
-      // route.push(nextLetter);
       idx += 1;
     } else {
       canGo = false;
     }
   }
-  console.log('routeTab', routeTab, idx, cost);
   return idx === userRouteLength
     ? [
         {
