@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 import TextareaAutosize from '@material-ui/core/TextareaAutosize';
 import Button from '../BasicElements/Button';
-// import Button from '@material-ui/core/Button';
 import Tabs from '../BasicElements/Tab';
 
 export const WrapperSettingPart = styled.div`

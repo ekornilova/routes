@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useState, memo } from 'react';
 import { getRoutesFromStr } from './helpers';
 import { RouteI, TabPanelProps } from './interfaces';
 import CheckUserRouteComponent from './CheckUserRouteComponent';
@@ -16,11 +16,11 @@ import {
 const tabSettings = [
   {
     label: 'CHECK YOUR ROUTE',
-    component: CheckUserRouteComponent,
+    component: memo(CheckUserRouteComponent),
   },
   {
     label: 'FIND ROUTE',
-    component: FindRoutesComponent,
+    component: memo(FindRoutesComponent),
   },
 ];
 const getComponent = (props: TabPanelProps) => (Component: FC<TabPanelProps>) => {
@@ -54,6 +54,7 @@ export const RoutePage: FC = () => {
   const onChangeTab = (event: React.ChangeEvent, newIdx: number) => {
     setIndexTab(newIdx);
   };
+
   return (
     <>
       <WrapperSettingPart>
