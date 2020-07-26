@@ -1,9 +1,15 @@
 //  const routes = `AB1, AC4, AD10, BE3, CD4, CF2, DE1, EB3, EA2, FD1`
 import { RouteI, RouteTree, RouteResult } from './interfaces';
 
-export const getRoutesFromStr = (routesStr: string): RouteI[] => {
+export const getRoutesFromStr = (
+  routesStr: string,
+): {
+  routes: RouteI[];
+  letters: string[];
+} => {
   const routes = routesStr.replace(/[\s]/g, '');
-  return routes.split(',').reduce((result: RouteI[], route: string) => {
+  const letters = new Set();
+  const routesResult = routes.split(',').reduce((result: RouteI[], route: string) => {
     if (route.match(/^[a-z]{2}[0-9]+$/i)) {
       const [begin, end] = route.slice(0, 2).split('');
       const routeObj: RouteI = {
@@ -13,9 +19,16 @@ export const getRoutesFromStr = (routesStr: string): RouteI[] => {
         id: route,
       };
       result.push(routeObj);
+      letters.add(begin);
+      letters.add(end);
     }
     return result;
   }, []);
+
+  return {
+    routes: routesResult,
+    letters: Array.from(letters) as string[],
+  };
 };
 // const defaultDeliveryRoute = {
 //   routeStr: '',

@@ -16,3 +16,8 @@ export interface RouteResult {
   route: string[];
   cost: number;
 }
+
+export interface TabPanelProps {
+  routes: RouteI[];
+  letters: string[];
+}
