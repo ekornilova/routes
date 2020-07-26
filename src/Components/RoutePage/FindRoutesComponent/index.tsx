@@ -1,16 +1,17 @@
 import React, { FC, useState, ChangeEvent, useEffect } from 'react';
 import { getRoutesResult } from '../helpers';
 import { TabPanelProps, RouteResult } from '../interfaces';
-import { columns } from './tableSettings';
+import TabResult from '../TabResult';
+// import { columns } from './tableSettings';
 import {
   Wrapper,
   WrapperSelectPart,
   SelectFrom,
   SelectTo,
   UpdateRoute,
-  WrapperOutPart,
-  StTable,
-  WrapperResult,
+  // WrapperOutPart,
+  // StTable,
+  // WrapperResult,
 } from './styles';
 
 const FindRoutesComponent: FC<TabPanelProps> = ({ letters, routes }) => {
@@ -61,13 +62,14 @@ const FindRoutesComponent: FC<TabPanelProps> = ({ letters, routes }) => {
           FIND ROUTES
         </UpdateRoute>
       </WrapperSelectPart>
-      <WrapperResult>
+      <TabResult result={result} />
+      {/* <WrapperResult>
         {result.length ? (
           <StTable columns={columns} rows={result} />
         ) : (
           <WrapperOutPart>No suitable routes</WrapperOutPart>
         )}
-      </WrapperResult>
+      </WrapperResult> */}
     </Wrapper>
   );
 };

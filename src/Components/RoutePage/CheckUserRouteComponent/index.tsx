@@ -1,7 +1,8 @@
 import React, { FC, useState } from 'react';
 import { getRoutesResult } from '../helpers';
 import { TabPanelProps, RouteResult } from '../interfaces';
-import { Wrapper, WrapperTagPart, StyledTags, CheckRoute, WrapperOutPart, Header } from './styles';
+import { Wrapper, WrapperTagPart, StyledTags, CheckRoute, Header } from './styles';
+import TabResult from '../TabResult';
 
 const CheckUserRouteComponent: FC<TabPanelProps> = ({ letters, routes }) => {
   const [chooseLetters, setChooseLetters] = useState<string[]>([]);
@@ -25,7 +26,7 @@ const CheckUserRouteComponent: FC<TabPanelProps> = ({ letters, routes }) => {
           Check Route
         </CheckRoute>
       </WrapperTagPart>
-      <WrapperOutPart>{JSON.stringify(result)}</WrapperOutPart>
+      <TabResult result={result} />
     </Wrapper>
   );
 };

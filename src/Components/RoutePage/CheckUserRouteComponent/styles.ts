@@ -12,4 +12,3 @@ export const Header = styled.div`
 `;
 export const StyledTags = styled(Tags)``;
 export const CheckRoute = styled(Button)``;
-export const WrapperOutPart = styled.div``;
