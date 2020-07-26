@@ -1,6 +1,6 @@
 import React, { FC, useState, memo } from 'react';
 import { getRoutesFromStr } from './helpers';
-import { RouteI, TabPanelProps } from './interfaces';
+import { RouteI, TabPanelProps, RouteTable } from './interfaces';
 import CheckUserRouteComponent from './CheckUserRouteComponent';
 import FindRoutesComponent from './FindRoutesComponent';
 import {
@@ -40,11 +40,13 @@ export const RoutePage: FC = () => {
   const [data, setData] = useState<{
     routes: RouteI[];
     letters: string[];
+    table: RouteTable;
   }>({
     routes: [],
     letters: [],
+    table: {},
   });
-  const { routes, letters } = data;
+  const { routes } = data;
   const onUpdateRoutes = () => {
     setData(getRoutesFromStr(routesStr));
   };
@@ -75,7 +77,7 @@ export const RoutePage: FC = () => {
           </WrapperReadyStrRoutes>
         )}
       </WrapperSettingPart>
-      {!!letters.length && (
+      {!!routes.length && (
         <StyledTabs value={indexTab} onChange={onChangeTab} items={getTabItems(data)} />
       )}
     </>

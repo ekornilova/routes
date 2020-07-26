@@ -1,19 +1,22 @@
-import React, { FC, useState } from 'react';
-import { getRoutesResult } from '../helpers';
+import React, { FC, useState, useEffect } from 'react';
+import { checkUserRoute } from '../helpers';
 import { TabPanelProps, RouteResult } from '../interfaces';
 import { Wrapper, WrapperTagPart, StyledTags, CheckRoute, Header } from './styles';
 import TabResult from '../TabResult';
 
-const CheckUserRouteComponent: FC<TabPanelProps> = ({ letters, routes }) => {
+const CheckUserRouteComponent: FC<TabPanelProps> = ({ letters, routes, table }) => {
   const [chooseLetters, setChooseLetters] = useState<string[]>([]);
   const [result, setResult] = useState<RouteResult[]>([]);
-
+  useEffect(() => {
+    setChooseLetters([]);
+    setResult([]);
+  }, [routes]);
   const onChange = (values: string[]) => {
     setChooseLetters(values);
   };
   const onFindRoutes = () => {
     if (chooseLetters.length > 1) {
-      setResult(getRoutesResult(chooseLetters[0], chooseLetters[chooseLetters.length - 1], routes));
+      setResult(checkUserRoute(chooseLetters, table));
     }
   };
 

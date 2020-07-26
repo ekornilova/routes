@@ -4,6 +4,11 @@ export interface RouteI {
   cost: number;
   id: string;
 }
+export interface RouteTable {
+  [key: string]: {
+    [key: string]: number;
+  };
+}
 export interface RouteTree {
   route: string[];
   cost: number;
@@ -20,4 +25,5 @@ export interface RouteResult {
 export interface TabPanelProps {
   routes: RouteI[];
   letters: string[];
+  table: RouteTable;
 }

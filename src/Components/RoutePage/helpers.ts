@@ -1,26 +1,35 @@
 //  const routes = `AB1, AC4, AD10, BE3, CD4, CF2, DE1, EB3, EA2, FD1`
-import { RouteI, RouteTree, RouteResult } from './interfaces';
+import { RouteI, RouteTree, RouteResult, RouteTable } from './interfaces';
 
 export const getRoutesFromStr = (
   routesStr: string,
 ): {
   routes: RouteI[];
+  table: RouteTable;
   letters: string[];
 } => {
   const routes = routesStr.replace(/[\s]/g, '');
   const letters = new Set();
+  const table = {};
   const routesResult = routes.split(',').reduce((result: RouteI[], route: string) => {
     if (route.match(/^[a-z]{2}[0-9]+$/i)) {
       const [begin, end] = route.slice(0, 2).split('');
-      const routeObj: RouteI = {
-        begin,
-        end,
-        cost: Number(route.slice(2)),
-        id: route,
-      };
-      result.push(routeObj);
-      letters.add(begin);
-      letters.add(end);
+      const cost = Number(route.slice(2));
+      if (cost && begin !== end) {
+        const routeObj: RouteI = {
+          begin,
+          end,
+          cost,
+          id: route,
+        };
+        result.push(routeObj);
+        letters.add(begin);
+        letters.add(end);
+        if (!table[begin as keyof typeof table]) {
+          table[begin] = {};
+        }
+        table[begin][end] = cost;
+      }
     }
     return result;
   }, []);
@@ -28,6 +37,7 @@ export const getRoutesFromStr = (
   return {
     routes: routesResult,
     letters: Array.from(letters) as string[],
+    table,
   };
 };
 
@@ -147,4 +157,33 @@ export const getRoutesResult = (
   return treeResult.sort((a, b) => {
     return a.cost - b.cost;
   });
+};
+export const checkUserRoute = (userRoute: string[], routeTab: RouteTable): RouteResult[] => {
+  // const copyUserRoute = [...userRoute];
+  const userRouteLength = userRoute.length;
+  let cost = 0;
+  let beginLetter = userRoute[0];
+  // const route = [beginLetter]
+  let idx = 1;
+  let canGo = true;
+  while (idx < userRouteLength && canGo) {
+    const nextLetter = userRoute[idx];
+    if (routeTab[beginLetter] && routeTab[beginLetter][nextLetter]) {
+      cost += routeTab[beginLetter][nextLetter];
+      beginLetter = nextLetter as string;
+      // route.push(nextLetter);
+      idx += 1;
+    } else {
+      canGo = false;
+    }
+  }
+  console.log('routeTab', routeTab, idx, cost);
+  return idx === userRouteLength
+    ? [
+        {
+          route: userRoute,
+          cost,
+        },
+      ]
+    : [];
 };

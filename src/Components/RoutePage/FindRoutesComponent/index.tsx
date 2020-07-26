@@ -33,6 +33,7 @@ const FindRoutesComponent: FC<TabPanelProps> = ({ letters, routes }) => {
   const [result, setResult] = useState<RouteResult[]>([]);
   useEffect(() => {
     setSetting(defaultSettingValue);
+    setResult([]);
   }, [routes]);
 
   const { letterFrom, letterTo, maxStop, maxCost, canTwice } = setting;
