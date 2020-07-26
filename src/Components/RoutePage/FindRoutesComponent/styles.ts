@@ -22,3 +22,7 @@ export const CanTwiceCheckBox = styled(Checkbox)``;
 export const SelectFrom = styled(Select)``;
 export const SelectTo = styled(Select)``;
 export const UpdateRoute = styled(Button)``;
+export const CountRoutes = styled.div`
+  width: 100%;
+  text-align: end;
+`;

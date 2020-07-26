@@ -12,6 +12,7 @@ import {
   MaxStopInput,
   CanTwiceCheckBox,
   WrapperSettingsPart,
+  CountRoutes,
 } from './styles';
 
 interface SettingI {
@@ -122,6 +123,7 @@ const FindRoutesComponent: FC<TabPanelProps> = ({ letters, routes, table }) => {
           FIND ROUTES
         </UpdateRoute>
       </WrapperSelectPart>
+      {!!result.length && <CountRoutes>{`Count of possible routes: ${result.length}`}</CountRoutes>}
       <TabResult result={result} />
     </Wrapper>
   );
