@@ -14,6 +14,7 @@ test(`function getRoutesResult expect to get from routes2 array with length 2`, 
 test(`function getRoutesResult expect to get from routes2, maxCost 12 - array with length 4`, () => {
   expect(getRoutesResult('E', 'E', getRoutesFromStr(routes2).table, false, 12).length).toEqual(4);
 });
+
 test(`function getRoutesResult expect to get from routes2, maxCost 12, maxStop 4 - array with length 4`, () => {
   expect(getRoutesResult('E', 'E', getRoutesFromStr(routes2).table, false, 10, 4).length).toEqual(
     2,
