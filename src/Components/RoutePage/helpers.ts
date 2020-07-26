@@ -35,12 +35,12 @@ export const getRoutesFromStr = (
 //   cost: 0,
 //   routeArr: []
 // }
-const defaultResult: RouteTree = {
-  route: [],
-  cost: 0,
-  routes: [],
-  ids: {},
-};
+// const defaultResult: RouteTree = {
+//   route: [],
+//   cost: 0,
+//   routes: [],
+//   ids: {},
+// };
 export const getNextRoute = (result: RouteTree, route: RouteI): RouteTree => {
   const newRoute = result.route.concat([route.end]);
   const { cost, ids: oldIds } = result;
@@ -113,7 +113,9 @@ export const getRoutesResult = (
 ): RouteResult[] => {
   //   const routesArr = getRoutes(routes);
   const result = getDeliveryRoute(routesArr, beginLetter, endLetter, {
-    ...defaultResult,
+    cost: 0,
+    routes: [],
+    ids: {},
     route: [beginLetter],
   });
   //   console.log('result', JSON.stringify(result))

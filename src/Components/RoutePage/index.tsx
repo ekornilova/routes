@@ -68,9 +68,9 @@ export const RoutePage: FC = () => {
         </WrapperInputStrRoutes>
         {!!routes.length && (
           <WrapperReadyStrRoutes>
-            <ReadyStrRoutes>{`Your route settings: ${routes
-              .map((route) => route.id)
-              .join(', ')}`}</ReadyStrRoutes>
+            <ReadyStrRoutes>
+              {`Your route settings: ${routes.map((route) => route.id).join(', ')}`}
+            </ReadyStrRoutes>
           </WrapperReadyStrRoutes>
         )}
       </WrapperSettingPart>

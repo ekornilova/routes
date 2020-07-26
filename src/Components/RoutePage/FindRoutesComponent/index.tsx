@@ -1,6 +1,7 @@
-import React, { FC, useState, ChangeEvent } from 'react';
+import React, { FC, useState, ChangeEvent, useEffect } from 'react';
 import { getRoutesResult } from '../helpers';
 import { TabPanelProps, RouteResult } from '../interfaces';
+import { columns } from './tableSettings';
 import {
   Wrapper,
   WrapperSelectPart,
@@ -8,15 +9,22 @@ import {
   SelectTo,
   UpdateRoute,
   WrapperOutPart,
+  StTable,
+  WrapperResult,
 } from './styles';
 
 const FindRoutesComponent: FC<TabPanelProps> = ({ letters, routes }) => {
   const [letterTo, setLetterTo] = useState<string>('');
   const [letterFrom, setLetterFrom] = useState<string>('');
   const [result, setResult] = useState<RouteResult[]>([]);
-
+  useEffect(() => {
+    setLetterTo('');
+    setLetterFrom('');
+    setResult([]);
+  }, [routes]);
   const onFindRoutes = () => {
-    setResult(getRoutesResult(letterTo, letterFrom, routes));
+    const newResult = getRoutesResult(letterFrom, letterTo, routes);
+    setResult(newResult);
   };
 
   const onSelectChange = (isLetterTo?: boolean) => (
@@ -31,20 +39,21 @@ const FindRoutesComponent: FC<TabPanelProps> = ({ letters, routes }) => {
       label: letter,
     };
   });
+
   return (
     <Wrapper>
       <WrapperSelectPart>
         <SelectTo
           forForm
           labelText="From"
-          value={letterTo}
+          value={letterFrom}
           values={letterValues}
-          onChange={onSelectChange(true)}
+          onChange={onSelectChange(false)}
         />
         <SelectFrom
           forForm
           labelText="To"
-          value={letterFrom}
+          value={letterTo}
           values={letterValues}
           onChange={onSelectChange(true)}
         />
@@ -52,7 +61,13 @@ const FindRoutesComponent: FC<TabPanelProps> = ({ letters, routes }) => {
           FIND ROUTES
         </UpdateRoute>
       </WrapperSelectPart>
-      <WrapperOutPart>{JSON.stringify(result)}</WrapperOutPart>
+      <WrapperResult>
+        {result.length ? (
+          <StTable columns={columns} rows={result} />
+        ) : (
+          <WrapperOutPart>No suitable routes</WrapperOutPart>
+        )}
+      </WrapperResult>
     </Wrapper>
   );
 };
