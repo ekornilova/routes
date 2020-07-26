@@ -4,7 +4,6 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { createGlobalStyle } from 'styled-components';
 import { routes as routesConfig } from '../routes';
 
-//      font-family: ${(props: any) => props.theme.fonts.font};
 const GlobalStyle = createGlobalStyle`
   body {
     margin: 0px;

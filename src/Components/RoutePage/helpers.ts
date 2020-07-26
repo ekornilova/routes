@@ -116,11 +116,6 @@ export const getDeliveryRoute = (
       const possibleRoutes = Object.entries(routeTab[beginL]).map(([end, cost]) => {
         return getRoute(beginL, end, cost);
       });
-      // .filter((route) => {
-      //   return canTwice
-      //     ? !result.ids[route.unicId] || result.ids[route.unicId] < 2
-      //     : !result.ids[route.unicId];
-      // });
       if (possibleRoutes.length) {
         possibleRoutes.forEach((route) => {
           const newRouteForArr = getNextRoute(result, route, canTwice, maxCost, maxStop);
