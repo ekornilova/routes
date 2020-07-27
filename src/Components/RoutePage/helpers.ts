@@ -49,7 +49,6 @@ export const getRoutesFromStr = (
     return result;
   }, []);
 
-  console.log('table', table);
   return {
     routes: routesResult,
     letters: Array.from(letters) as string[],
@@ -112,13 +111,10 @@ export const getDeliveryRoute = (
   maxCost?: number,
   maxStop?: number,
 ): RouteTree => {
-  // const isFindRoute = routeTab[beginL] && routeTab[beginL][endL];
-  // if (!isFindRoute) {
   if (routeTab[beginL]) {
     const possibleRoutes = Object.entries(routeTab[beginL]).map(([end, cost]) => {
       return getRoute(beginL, end, cost);
     });
-    console.log(result, beginL, endL, possibleRoutes);
     if (possibleRoutes.length) {
       possibleRoutes.forEach((route) => {
         const newRouteForArr = getNextRoute(result, route, canTwice, maxCost, maxStop);
@@ -149,18 +145,6 @@ export const getDeliveryRoute = (
     }
   }
   return result;
-  // }
-  // const findNextRoute = getNextRoute(
-  //   result,
-  //   getRoute(beginL, endL, routeTab[beginL][endL]),
-  //   canTwice,
-  //   maxCost,
-  //   maxStop,
-  // );
-  // if (findNextRoute) {
-  //   result.routes.push(findNextRoute);
-  // }
-  // return result;
 };
 export const goTreeResult = (tree: RouteTree, routes: RouteResult[], endL: string) => {
   if (!tree.routes.length) {
@@ -202,7 +186,6 @@ export const getRoutesResult = (
     maxCost,
     maxStop,
   );
-  console.log('result', result);
   const treeResult: RouteResult[] = [];
   goTreeResult(result, treeResult, endLetter);
   return treeResult.sort((a, b) => {
